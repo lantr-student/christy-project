@@ -77,9 +77,26 @@ export function extractActivity(text: string): string | null {
 
 export function extractLocation(text: string): string | null {
   const match = text.match(
-    /(?:near|in|at|around)\s+([A-Z][\w'.\s]{1,32}?)(?=\s+(?:this|next|tomorrow|today|for|on)\b|[,.!?]|$)/
+    /(?:near|in|at|around)\s+([A-Z][\w'.\s]{1,32}?)(?=\s+(?:this|next|tomorrow|today|for|on)\b|[,.!?]|$)/i
   );
   if (match) return match[1].trim();
+
+  // No preposition to anchor on (e.g. "Sturtevant Falls tomorrow") -- strip out
+  // whatever reads as activity/date/duration/time-of-day and see if a place name
+  // is left over.
+  let remainder = text;
+  for (const [re] of ACTIVITY_KEYWORDS) remainder = remainder.replace(re, " ");
+  remainder = remainder
+    .replace(/\b(\d{1,2})\/(\d{1,2})(?:\/\d{2,4})?\b/g, " ")
+    .replace(/\b(tomorrow|today|this weekend|next week)\b/gi, " ")
+    .replace(new RegExp(`\\b(this\\s+)?(${WEEKDAYS.join("|")})\\b`, "gi"), " ")
+    .replace(/\d{1,2}(?::\d{2})?\s*(?:am|pm)\s*(?:-|to|until|–)\s*\d{1,2}(?::\d{2})?\s*(?:am|pm)/gi, " ")
+    .replace(/\b(morning|afternoon|evening|night|early)\b/gi, " ")
+    .replace(/(\d+(?:\.\d+)?)\s*(hours?|hrs?|h\b|minutes?|mins?)/gi, " ")
+    .replace(/[,.!?]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (remainder.length >= 2) return remainder;
   return null;
 }
 
