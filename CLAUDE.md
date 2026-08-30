@@ -11,9 +11,8 @@ AirAware is a web app that helps people plan outdoor activities by showing envir
 - Ask before touching anything outside this project folder.
 
 ## What's placeholder
-- All environmental data (temperature, precipitation, UV, air quality, sunrise/sunset) comes from `src/lib/mockWeather.ts`, a deterministic fake-data generator seeded from the plan details — not a real weather API.
-- The chat flow (`src/app/page.tsx` + `src/components/chat/`) and the dashboard (`src/app/dashboard/page.tsx` + `src/components/dashboard/`) are both fully wired up and functional, just running on mock data.
-- Saved plans persist to the browser's `localStorage` (`src/lib/savedPlans.ts`), not a real backend/database.
+- All environmental data (temperature, precipitation, UV, air quality, sunrise/sunset) comes from `src/lib/mockWeather.ts`, a deterministic fake-data generator — not a real weather API. It only backs the dashboard (`src/app/dashboard/page.tsx` + `src/components/dashboard/`) now.
+- The chat screen (`src/app/page.tsx` + `src/components/chat/`) sends each message to the real AirAware backend (`backend/`, deployed at `https://christy-project-production.up.railway.app`) and shows its reply — not mock data. The backend itself calls a real model; see `backend/agent.py`.
 
 ## How to run it
 npm run dev, then open http://localhost:3000
