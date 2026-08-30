@@ -5,11 +5,22 @@ POST /message  -> {"message": "..."} -> {"reply": "..."}
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from agent import ask_model, get_credentials
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://christy-project.vercel.app",
+        "http://localhost:3000",
+    ],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 
 
 class MessageRequest(BaseModel):
